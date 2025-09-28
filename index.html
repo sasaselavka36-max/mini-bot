@@ -1,168 +1,141 @@
+Danil, [28.09.2025 21:15]
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Мини-Шахматы</title>
+    <title>Мини-Шахматы ТГ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: Arial;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            background: #f2f2f2;
-        }
-
-        #start,
-        #rules,
-        #game {
-            display: none;
-            padding: 20px;
-        }
-
-        button {
-            font-size: 20px;
-            padding: 15px 25px;
-            margin: 10px;
-            cursor: pointer;
-        }
-
-        table {
-            border-collapse: collapse;
-            margin: 20px auto;
-        }
-
-        td {
-            width: 50px;
-            height: 50px;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 35px;
-            cursor: pointer;
-        }
-
-        .white {
-            background: #eee;
-        }
-
-        .black {
-            background: #999;
-        }
-
-        .selected {
-            outline: 3px solid red;
-        }
+        body { font-family: Arial, sans-serif; margin:0; padding:0; text-align:center; background:#f7f3e9;}
+        #start,#rules,#game { display:none; padding:20px; }
+        button { font-size:18px; padding:12px 30px; margin:10px; cursor:pointer; border:none; border-radius:10px; background:#6c5ce7; color:white; box-shadow:0 4px #4834d4; transition:0.2s; }
+        button:hover { background:#4834d4; box-shadow:0 2px #312e81; }
+        button:active { box-shadow:0 1px #312e81; transform:translateY(2px); }
+        table { border-collapse: collapse; margin:20px auto; width:95vw; max-width:400px; }
+        td { width:12.5%; padding-top:12.5%; position:relative; }
+        td div { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; font-size:5vw; max-font-size:40px; cursor:pointer; border-radius:5px; }
+        .white { background:#f0d9b5; }
+        .black { background:#b58863; }
+        .selected { outline:3px solid #e17055; }
+        #status { font-size:20px; color:red; margin-top:10px; font-weight:bold; }
+        h1,h2 { color:#2d3436; }
     </style>
 </head>
-
 <body>
 
-    <div id="start">
-        <h1>Мини-Шахматы</h1>
-        <button onclick="showGame()">Играть</button>
-        <button onclick="showRules()">Правила</button>
-    </div>
+<div id="start">
+    <h1>Мини-Шахматы</h1>
+    <button id="playBtn">Играть</button>
+    <button id="rulesBtn">Правила</button>
+</div>
 
-    <div id="rules">
-        <h2>Правила шахмат</h2>
-        <p>Вы играете белыми. Пешки ходят только вперед, фигуры ходят по своим правилам. Цель: поставить шах и мат
-            королю противника.</p>
-        <button onclick="showStart()">Назад</button>
-    </div>
+<div id="rules">
+    <h2>Правила шахмат</h2>
+    <p>Вы играете белыми. Пешки, ладьи, конь, слон, ферзь и король ходят по правилам. Цель: поставить шах и мат королю противника.</p>
+    <button id="backBtn">Назад</button>
+</div>
 
-    <div id="game">
-        <h2>Игра</h2>
-        <table id="board"></table>
-        <button onclick="sendData()">Отправить состояние боту</button>
-    </div>
+<div id="game">
+    <h2>Игра</h2>
+    <table id="board"></table>
+    <div id="status"></div>
+    <button id="sendBtn">Отправить состояние боту</button>
+</div>
 
-    <script>
-        // Telegram WebApp заглушка для ПК
-        if (!window.Telegram) window.Telegram = { WebApp: { sendData: d => alert("Отправка боту: " + d) } };
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
-        const start = document.getElementById('start');
-        const rules = document.getElementById('rules');
-        const gameDiv = document.getElementById('game');
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    if (!window.Telegram) window.Telegram = { WebApp: { sendData: (d) => alert("Отправка боту: "+d) } };
 
-        function showStart() { start.style.display = 'block'; rules.style.display = 'none'; gameDiv.style.display = 'none'; }
-        function showRules() { start.style.display = 'none'; rules.style.display = 'block'; gameDiv.style.display = 'none'; }
-        function showGame() { start.style.display = 'none'; rules.style.display = 'none'; gameDiv.style.display = 'block'; drawBoard(); }
+    const start = document.getElementById('start');
+    const rules = document.getElementById('rules');
+    const gameDiv = document.getElementById('game');
+    const statusDiv = document.getElementById('status');
 
-        // Шахматная доска и фигуры
-        let board = [
-            ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
-            ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
-            ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
-        ];
-        const white = ['♙', '♖', '♘', '♗', '♕', '♔'];
-        const black = ['♟', '♜', '♞', '♝', '♛', '♚'];
-        let selected = null;
+    const playBtn = document.getElementById('playBtn');
+    const rulesBtn = document.getElementById('rulesBtn');
+    const backBtn = document.getElementById('backBtn');
+    const sendBtn = document.getElementById('sendBtn');
 
-        function drawBoard() {
-            const table = document.getElementById('board');
-            table.innerHTML = '';
-            for (let i = 0; i < 8; i++) {
-                const row = document.createElement('tr');
-                for (let j = 0; j < 8; j++) {
-                    const cell = document.createElement('td');
-                    cell.textContent = board[i][j];
-                    cell.className = (i + j) % 2 === 0 ? 'white' : 'black';
-                    if (selected && selected[0] === i && selected[1] === j) cell.classList.add('selected');
-                    cell.onclick = () => clickCell(i, j);
-                    row.appendChild(cell);
-                }
-                table.appendChild(row);
+    playBtn.addEventListener('click', showGame);
+    rulesBtn.addEventListener('click', showRules);
+    backBtn.addEventListener('click', showStart);
+    sendBtn.addEventListener('click', sendData);
+
+    function showStart(){ start.style.display='block'; rules.style.display='none'; gameDiv.style.display='none'; statusDiv.textContent=''; }
+    function showRules(){ start.style.display='none'; rules.style.display='block'; gameDiv.style.display='none'; statusDiv.textContent=''; }
+    function showGame(){ start.style.display='none'; rules.style.display='none'; gameDiv.style.display='block'; drawBoard(); statusDiv.textContent=''; }
+
+    const game = new Chess();
+    const unicodePieces = {'p':'♟','r':'♜','n':'♞','b':'♝','q':'♛','k':'♚','P':'♙','R':'♖','N':'♘','B':'♗','Q':'♕','K':'♔'};
+    let selected = null;
+
+    function drawBoard(){
+        const table = document.getElementById('board');
+        table.innerHTML = '';
+        const board = game.board();
+        for(let i=0;i<8;i++){
+            const row = document.createElement('tr');
+            for(let j=0;j<8;j++){
+                const cell = document.createElement('td');
+                const div = document.createElement('div');
+                const piece = board[i][j];
+                div.textContent = piece ? unicodePieces[piece.color==='w'?piece.type.toUpperCase():piece.type] : '';
+                div.className = (i+j)%2===0?'white':'black';
+                if(selected && selected[0]===i && selected[1]===j) div.classList.add('selected');
+                div.
+
+Danil, [28.09.2025 21:15]
+onclick = () => handleClick(i,j);
+                cell.appendChild(div);
+                row.appendChild(cell);
             }
+            table.appendChild(row);
         }
+        checkStatus();
+    }
 
-        function clickCell(i, j) {
-            const piece = board[i][j];
-            if (selected) {
-                // нельзя бить свои фигуры
-                if (white.includes(piece)) { selected = [i, j]; drawBoard(); return; }
-                board[i][j] = board[selected[0]][selected[1]];
-                board[selected[0]][selected[1]] = '';
-                selected = null;
-                drawBoard();
-                setTimeout(botMove, 300);
-            } else if (white.includes(piece)) {
-                selected = [i, j];
-                drawBoard();
-            }
-        }
-
-        function botMove() {
-            // простой бот: случайная фигура и случайный ход на соседнюю клетку
-            let moves = [];
-            for (let i = 0; i < 8; i++) {
-                for (let j = 0; j < 8; j++) {
-                    if (black.includes(board[i][j])) {
-                        [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]].forEach(d => {
-                            let x = i + d[0], y = j + d[1];
-                            if (x >= 0 && x < 8 && y >= 0 && y < 8 && !black.includes(board[x][y])) moves.push({ from: [i, j], to: [x, y] });
-                        });
-                    }
-                }
-            }
-            if (moves.length === 0) return;
-            const move = moves[Math.
-
-                floor(Math.random() * moves.length)];
-            board[move.to[0]][move.to[1]] = board[move.from[0]][move.from[1]];
-            board[move.from[0]][move.from[1]] = '';
+    function handleClick(i,j){
+        const square = String.fromCharCode(97+j)+(8-i);
+        if(selected){
+            const from = String.fromCharCode(97+selected[1])+(8-selected[0]);
+            const move = game.move({from,to:square,promotion:'q'});
+            selected = null;
+            drawBoard();
+            if(move) setTimeout(botMove,300);
+        } else {
+            const piece = game.get(square);
+            if(piece && piece.color==='w') selected = [i,j];
             drawBoard();
         }
+    }
 
-        function sendData() {
-            Telegram.WebApp.sendData(JSON.stringify({ board }));
+    function botMove(){
+        const moves = game.moves();
+        if(moves.length===0) return;
+        const move = moves[Math.floor(Math.random()*moves.length)];
+        game.move(move);
+        drawBoard();
+    }
+
+    function checkStatus(){
+        if(game.in_checkmate()){
+            statusDiv.textContent = 'Мат! Игра окончена.';
+        } else if(game.in_stalemate()){
+            statusDiv.textContent = 'Пат! Ничья.';
+        } else if(game.in_check()){
+            statusDiv.textContent = 'Шах!';
+        } else {
+            statusDiv.textContent = '';
         }
+    }
 
-        showStart();
-    </script>
+    function sendData(){
+        Telegram.WebApp.sendData(JSON.stringify({fen:game.fen(),history:game.history()}));
+    }
+
+    showStart();
+});
+</script>
 </body>
-
 </html>
