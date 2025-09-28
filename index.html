@@ -2,10 +2,10 @@
 <html>
 
 <head>
-    <title>Мини-Шахматы ТГ</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мини-Шахматы</title>
     <style>
-        /* --- CSS для GitHub подсветки --- */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -48,13 +48,15 @@
             border-collapse: collapse;
             margin: 20px auto;
             width: 90vw;
-            max-width: 400px;
+            /* мобильный экран */
+            max-width: 600px;
+            /* ПК */
         }
 
         td {
-            width: 12.5%;
-            padding-top: 12.5%;
             position: relative;
+            width: 12.5%;
+            aspect-ratio: 1/1;
         }
 
         td div {
@@ -66,10 +68,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 5vw;
-            max-font-size: 40px;
-            cursor: pointer;
-            border-radius: 5px;
+        }
+
+        .piece {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            pointer-events: none;
+            max-width: 70px;
+            max-height: 70px;
+            /* ПК */
         }
 
         .white {
@@ -94,6 +102,18 @@
         h1,
         h2 {
             color: #2d3436;
+        }
+
+        /* Медиазапросы для больших экранов */
+        @media (min-width: 1000px) {
+            table {
+                max-width: 800px;
+            }
+
+            .piece {
+                max-width: 90px;
+                max-height: 90px;
+            }
         }
     </style>
 </head>
@@ -121,10 +141,9 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            if (!window.Telegram) window.Telegram = { WebApp: { sendData: (d) => alert("Отправка боту: " + d) } };
+            if (!window.Telegram) window.Telegram = { WebApp: { sendData: d => alert("Отправка боту: " + d) } };
 
             const start = document.getElementById('start');
             const rules = document.getElementById('rules');
@@ -146,8 +165,22 @@
             function showGame() { start.style.display = 'none'; rules.style.display = 'none'; gameDiv.style.display = 'block'; drawBoard(); statusDiv.textContent = ''; }
 
             const game = new Chess();
-            const unicodePieces = { 'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'P': '♙', 'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔' };
             let selected = null;
+
+            const pieceImages = {
+                'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
+                'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
+                'n': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
+                'b': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
+                'q': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
+                'k': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg',
+                'P': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
+                'R': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
+                'N': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
+                'B': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
+                'Q': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+                'K': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg'
+            };
 
             function drawBoard() {
                 const table = document.getElementById('board');
@@ -159,10 +192,14 @@
                         const cell = document.createElement('td');
                         const div = document.createElement('div');
                         const piece = board[i][j];
-                        div.textContent = piece ? unicodePieces[piece.color === 'w' ? piece.type.toUpperCase() : piece.type] : '';
+                        if (piece) {
+                            const img = document.createElement('img');
+                            const code = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
+                            img.src = pieceImages[code];
+                            img.className = 'piece';
+                            div.appendChild(img);
+                        }
                         div.className = (i + j) % 2 === 0 ? 'white' : 'black';
-
-
                         if (selected && selected[0] === i && selected[1] === j) div.classList.add('selected');
                         div.onclick = () => handleClick(i, j);
                         cell.appendChild(div);
@@ -197,15 +234,10 @@
             }
 
             function checkStatus() {
-                if (game.in_checkmate()) {
-                    statusDiv.textContent = 'Мат! Игра окончена.';
-                } else if (game.in_stalemate()) {
-                    statusDiv.textContent = 'Пат! Ничья.';
-                } else if (game.in_check()) {
-                    statusDiv.textContent = 'Шах!';
-                } else {
-                    statusDiv.textContent = '';
-                }
+                if (game.in_checkmate()) { statusDiv.textContent = 'Мат! Игра окончена.'; }
+                else if (game.in_stalemate()) { statusDiv.textContent = 'Пат! Ничья.'; }
+                else if (game.in_check()) { statusDiv.textContent = 'Шах!'; }
+                else { statusDiv.textContent = ''; }
             }
 
             function sendData() {
@@ -215,7 +247,6 @@
             showStart();
         });
     </script>
-
 </body>
 
 </html>
