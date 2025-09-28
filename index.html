@@ -88,29 +88,111 @@
         h2 {
             color: #2d3436;
         }
+
+        /* Новый стиль для кнопок меню и разработчика */
+        #start button,
+        #developer button {
+            background: #8b5e3c;
+            /* коричневый цвет */
+            box-shadow: 0 4px #5c3d28;
+        }
+
+        #start button:hover,
+        #developer button:hover {
+            background: #5c3d28;
+            box-shadow: 0 2px #3a2617;
+        }
+
+        #start button:active,
+        #developer button:active {
+            box-shadow: 0 1px #3a2617;
+            transform: translateY(2px);
+        }
+
+        /* Стиль правил */
+        #rules h2,
+        #rules h3 {
+            text-align: center;
+        }
+
+        #rules p,
+        #rules ul {
+            text-align: left;
+            max-width: 700px;
+            margin: 0 auto 15px auto;
+            line-height: 1.5;
+        }
+
+        #developer {
+            text-align: center;
+            margin-top: 30px;
+        }
     </style>
 </head>
 
 <body>
 
+    <!-- Стартовое меню -->
     <div id="start">
         <h1>Мини-Шахматы</h1>
         <button id="playBtn">Играть</button>
         <button id="rulesBtn">Правила</button>
     </div>
 
+    <!-- Правила -->
     <div id="rules">
         <h2>Правила шахмат</h2>
-        <p>Вы играете белыми. Пешки, ладьи, конь, слон, ферзь и король ходят по правилам. Цель: поставить шах и мат
-            королю противника.</p>
+
+        <h3>Доска и фигуры</h3>
+        <p>Игра ведётся на доске 8×8 клеток (64 клетки). Клетки чередуются по цвету. У каждого игрока есть 16 фигур:</p>
+        <ul>
+            <li>1 король</li>
+            <li>1 ферзь</li>
+            <li>2 ладьи</li>
+            <li>2 слона</li>
+            <li>2 коня</li>
+            <li>8 пешек</li>
+        </ul>
+
+        <h3>Расстановка</h3>
+        <ul>
+            <li>Король — e1 для белых, e8 для чёрных</li>
+            <li>Ферзь — d1 для белых, d8 для чёрных</li>
+            <li>Ладьи — a1 и h1 для белых, a8 и h8 для чёрных</li>
+            <li>Кони — b1 и g1 для белых, b8 и g8 для чёрных</li>
+            <li>Слоны — c1 и f1 для белых, c8 и f8 для чёрных</li>
+        </ul>
+
+        <h3>Ходы</h3>
+        <p>Игроки ходят по очереди. Первый ход делает белый. Ход — это передвижение фигуры на свободную клетку или
+            взятие фигуры соперника. Взятая фигура снимается с доски. Ходы нельзя отменять, кроме случаев нарушения
+            правил.</p>
+
+        <h3>Цель игры</h3>
+        <p>Поставить мат королю противника — создать ситуацию, когда король не может защититься и будет взят следующим
+            ходом.</p>
+
+        <h3>Окончание</h3>
+        <ul>
+            <li>Побеждает игрок, поставивший мат.</li>
+            <li>Партия может закончиться вничью: троекратное повторение позиции, недостаток материала для мата,
+                соглашение игроков.</li>
+        </ul>
+
         <button id="backBtn">Назад</button>
     </div>
 
+    <!-- Игра -->
     <div id="game">
         <h2>Игра</h2>
         <table id="board"></table>
         <div id="status"></div>
         <button id="sendBtn">Отправить состояние боту</button>
+    </div>
+
+    <!-- Кнопка разработчика -->
+    <div id="developer">
+        <button onclick="window.open('https://t.me/traficcent', '_blank')">Разработчик: tg @traficcent</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
@@ -123,6 +205,7 @@
             const rules = document.getElementById('rules');
             const gameDiv = document.getElementById('game');
             const statusDiv = document.getElementById('status');
+
 
             const playBtn = document.getElementById('playBtn');
             const rulesBtn = document.getElementById('rulesBtn');
@@ -176,7 +259,6 @@
                 const table = document.getElementById('board');
                 table.innerHTML = '';
                 const board = game.board();
-
 
                 for (let i = 0; i < 8; i++) {
                     const row = document.createElement('tr');
