@@ -44,16 +44,6 @@
             transform: translateY(2px);
         }
 
-        /* Квадратная доска */
-        table {
-            border-collapse: collapse;
-            margin: 20px auto;
-            width: min(90vw, 600px);
-            /* мобильный: 90% экрана, ПК: максимум 600px */
-            height: min(90vw, 600px);
-            /* квадратная доска */
-        }
-
         td {
             width: 12.5%;
             height: 12.5%;
@@ -126,6 +116,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
             if (!window.Telegram) window.Telegram = { WebApp: { sendData: d => alert("Отправка боту: " + d) } };
 
             const start = document.getElementById('start');
@@ -143,9 +134,25 @@
             backBtn.addEventListener('click', showStart);
             sendBtn.addEventListener('click', sendData);
 
-            function showStart() { start.style.display = 'block'; rules.style.display = 'none'; gameDiv.style.display = 'none'; statusDiv.textContent = ''; }
-            function showRules() { start.style.display = 'none'; rules.style.display = 'block'; gameDiv.style.display = 'none'; statusDiv.textContent = ''; }
-            function showGame() { start.style.display = 'none'; rules.style.display = 'none'; gameDiv.style.display = 'block'; drawBoard(); statusDiv.textContent = ''; }
+            function showStart() {
+                start.style.display = 'block';
+                rules.style.display = 'none';
+                gameDiv.style.display = 'none';
+                statusDiv.textContent = '';
+            }
+            function showRules() {
+                start.style.display = 'none';
+                rules.style.display = 'block';
+                gameDiv.style.display = 'none';
+                statusDiv.textContent = '';
+            }
+            function showGame() {
+                start.style.display = 'none';
+                rules.style.display = 'none';
+                gameDiv.style.display = 'block';
+                drawBoard();
+                statusDiv.textContent = '';
+            }
 
             const game = new Chess();
             let selected = null;
@@ -169,6 +176,8 @@
                 const table = document.getElementById('board');
                 table.innerHTML = '';
                 const board = game.board();
+
+
                 for (let i = 0; i < 8; i++) {
                     const row = document.createElement('tr');
                     for (let j = 0; j < 8; j++) {
@@ -191,6 +200,7 @@
                     table.appendChild(row);
                 }
                 checkStatus();
+                resizeBoard();
             }
 
             function handleClick(i, j) {
@@ -227,8 +237,18 @@
                 Telegram.WebApp.sendData(JSON.stringify({ fen: game.fen(), history: game.history() }));
             }
 
+            // 🔹 квадратная доска под Telegram WebView
+            function resizeBoard() {
+                const table = document.getElementById('board');
+                const size = Math.min(window.innerWidth * 0.95, 600);
+                table.style.width = size + 'px';
+                table.style.height = size + 'px';
+            }
+            window.addEventListener('resize', resizeBoard);
+
             showStart();
-        });
+
+        }); // конец DOMContentLoaded
     </script>
 </body>
 
