@@ -1,18 +1,137 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Мой мини-бот</title>
+
+<head>
+    <title>Мини-Шахматы с ботом</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  </head>
-  <body>
-    <h1>Привет 👋</h1>
-    <p>Это моё мини-приложение!</p>
-    <button onclick="sendData()">Отправить данные боту</button>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+
+        td {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        .white {
+            background-color: #eee;
+        }
+
+        .black {
+            background-color: #999;
+        }
+
+        .selected {
+            outline: 3px solid red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Шахматы против бота 🤖</h1>
+    <p>Вы играете белыми. Клик на фигуру, затем на клетку, чтобы ходить.</p>
+    <table id="board"></table>
+    <button onclick="sendData()">Отправить состояние боту</button>
 
     <script>
-      function sendData() {
-        Telegram.WebApp.sendData("Пользователь нажал кнопку!");
-      }
+        const startPosition = [
+            ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'],
+            ['♟', '♟', '♟', '♟', '♟', '♟', '♟', '♟'],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['♙', '♙', '♙', '♙', '♙', '♙', '♙', '♙'],
+            ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖']
+        ];
+
+        let boardState = JSON.parse(JSON.stringify(startPosition));
+        let selected = null;
+
+        const whitePieces = ['♙', '♖', '♘', '♗', '♕', '♔'];
+        const blackPieces = ['♟', '♜', '♞', '♝', '♛', '♚'];
+
+        function drawBoard() {
+            const table = document.getElementById('board');
+            table.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 8; j++) {
+                    const cell = document.createElement('td');
+                    cell.textContent = boardState[i][j];
+                    cell.className = ((i + j) % 2 === 0) ? 'white' : 'black';
+                    cell.onclick = () => handleClick(i, j, cell);
+                    if (selected && selected[0] === i && selected[1] === j) cell.classList.add('selected');
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+        }
+
+        function handleClick(i, j) {
+            if (selected) {
+                // проверка, что не бьем свои фигуры
+                if (whitePieces.includes(boardState[i][j])) {
+                    selected = [i, j];
+                    drawBoard();
+                    return;
+                }
+
+                // передвигаем фигуру игрока
+                boardState[i][j] = boardState[selected[0]][selected[1]];
+                boardState[selected[0]][selected[1]] = '';
+                selected = null;
+                drawBoard();
+
+                // ход бота через небольшой таймаут
+                setTimeout(botMove, 500);
+            } else if (whitePieces.includes(boardState[i][j])) {
+                selected = [i, j];
+                drawBoard();
+            }
+        }
+
+        function botMove() {
+            // собираем все позиции черных фигур
+            let moves = [];
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    if (blackPieces.includes(boardState[i][j])) {
+                        // бот может двигаться на любую пустую или с белой фигурой рядом (простая логика)
+                        let dirs = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]; // простая 8-направлений
+                        dirs.forEach(d => {
+                            let x = i + d[0], y = j + d[1];
+                            if (x >= 0 && x < 8 && y >= 0 && y < 8 && !blackPieces.includes(boardState[x][y])) {
+                                moves.push({ from: [i, j], to: [x, y] });
+                            }
+                        });
+                    }
+                }
+            }
+            if (moves.length === 0) return; // бот не может ходить
+            const move = moves[Math.floor(Math.random() * moves.length)];
+            boardState[move.to[0]][move.to[1]] = boardState[move.from[0]][move.from[1]];
+            boardState[move.from[0]][move.from[1]] = '';
+            drawBoard();
+        }
+
+        function sendData() {
+            Telegram.WebApp.sendData(JSON.stringify({ board: boardState }));
+        }
+
+        drawBoard();
     </script>
-  </body>
+</body>
+
 </html>
