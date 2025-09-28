@@ -5,6 +5,7 @@
     <title>Мини-Шахматы ТГ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        /* --- CSS для GitHub подсветки --- */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -119,12 +120,10 @@
         <button id="sendBtn">Отправить состояние боту</button>
     </div>
 
-    <!-- Подключаем стабильную версию chess.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Заглушка Telegram WebApp для ПК
             if (!window.Telegram) window.Telegram = { WebApp: { sendData: (d) => alert("Отправка боту: " + d) } };
 
             const start = document.getElementById('start');
@@ -162,6 +161,7 @@
                         const piece = board[i][j];
                         div.textContent = piece ? unicodePieces[piece.color === 'w' ? piece.type.toUpperCase() : piece.type] : '';
                         div.className = (i + j) % 2 === 0 ? 'white' : 'black';
+
 
                         if (selected && selected[0] === i && selected[1] === j) div.classList.add('selected');
                         div.onclick = () => handleClick(i, j);
