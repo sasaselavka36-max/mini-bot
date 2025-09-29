@@ -13,8 +13,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            background: #d7b899 url('https://i.ibb.co/jbgJ6p6/wood-texture.jpg') repeat;
-            background-size: cover;
+            background: #d7b899 url("https://upload.wikimedia.org/wikipedia/commons/7/7d/Chess_board_opening_staunton.jpg") center/cover no-repeat;
             color: #fff;
         }
 
@@ -33,9 +32,9 @@
         main {
             flex: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: center;
+            text-align: center;
             padding: 10px;
             overflow-y: auto;
         }
@@ -67,7 +66,35 @@
             color: #fff;
         }
 
-        /* Игра */
+        /* Кнопки */
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-buttons button {
+            font-size: 18px;
+            padding: 14px 30px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            background: #8b5e3c;
+            color: white;
+            box-shadow: 0 4px #5c3d28;
+            transition: 0.2s;
+        }
+
+        .menu-buttons button:hover {
+            background: #5c3d28;
+            box-shadow: 0 2px #3a2617;
+        }
+
+        .menu-buttons button:active {
+            transform: translateY(2px);
+        }
+
+        /* Доска */
         #board {
             border: 6px solid #5c3d28;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
@@ -115,38 +142,6 @@
             color: #ffb347;
             margin-top: 10px;
         }
-
-        /* Кнопки */
-        button {
-            font-size: 16px;
-            padding: 10px 20px;
-            cursor: pointer;
-            border: none;
-            border-radius: 8px;
-            background: #8b5e3c;
-            color: white;
-            box-shadow: 0 3px #5c3d28;
-            transition: 0.2s;
-        }
-
-        button:hover {
-            background: #5c3d28;
-        }
-
-        button:active {
-            transform: translateY(2px);
-        }
-
-        /* Адаптив */
-        @media(max-width:600px) {
-            header {
-                font-size: 18px;
-            }
-
-            footer button {
-                font-size: 14px;
-            }
-        }
     </style>
 </head>
 
@@ -155,21 +150,43 @@
     <header>Мини шахматы</header>
 
     <main>
-        <!-- Стартовое меню -->
-        <div id="start">
-            <button id="playBtn">Играть</button>
-            <button id="rulesBtn">Правила</button>
+        <!-- Главная -->
+        <div id="homePage" class="page">
+            <div class="menu-buttons">
+                <button onclick="showPage('gamePage')">Играть</button>
+                <button onclick="showPage('rulesPage')">Правила</button>
+            </div>
+        </div>
+
+        <!-- Профиль -->
+        <div id="profilePage" class="page" style="display:none;">
+            <h2>Профиль</h2>
+            <p>Здесь будет информация об игроке.</p>
+        </div>
+
+        <!-- Настройки -->
+        <div id="settingsPage" class="page" style="display:none;">
+            <h2>Настройки</h2>
+            <p>Здесь будут параметры приложения.</p>
         </div>
 
         <!-- Правила -->
-        <div id="rules" style="display:none;">
+        <div id="rulesPage" class="page" style="display:none; text-align:left; max-width:700px;">
             <h2>Правила шахмат</h2>
-            <p>Краткое описание правил игры...</p>
-            <button id="backBtn">Назад</button>
+            <p>Игра ведётся на доске 8×8 клеток. У каждого игрока 16 фигур:</p>
+            <ul>
+                <li>1 король</li>
+                <li>1 ферзь</li>
+                <li>2 ладьи</li>
+                <li>2 слона</li>
+                <li>2 коня</li>
+                <li>8 пешек</li>
+            </ul>
+            <p>Цель игры — поставить мат королю противника.</p>
         </div>
 
         <!-- Игра -->
-        <div id="game" style="display:none;">
+        <div id="gamePage" class="page" style="display:none;">
             <table id="board"></table>
             <div id="status"></div>
             <button id="sendBtn">Отправить состояние боту</button>
@@ -177,131 +194,116 @@
     </main>
 
     <footer>
-        <button><span>👤</span>Профиль</button>
-        <button><span>🏠</span>Главная</button>
-        <button><span>⚙️</span>Настройки</button>
+        <button onclick="showPage('profilePage')"><span>👤</span>Профиль</button>
+        <button onclick="showPage('homePage')"><span>🏠</span>Главная</button>
+        <button onclick="showPage('settingsPage')"><span>⚙️</span>Настройки</button>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        function showPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.style.
 
-            if (!window.Telegram) window.Telegram = { WebApp: { sendData: d => alert("Отправка боту: " + d) } };
 
-            const start = document.getElementById('start');
-            const rules = document.getElementById('rules');
-            const gameDiv = document.getElementById('game');
-            const statusDiv = document.getElementById('status');
+                display = 'none');
+            document.getElementById(id).style.display = 'block';
+            if (id === 'gamePage') { drawBoard(); }
+        }
 
-            const playBtn = document.getElementById('playBtn');
-            const rulesBtn = document.getElementById('rulesBtn');
-            const backBtn = document.getElementById('backBtn');
-            const sendBtn = document.getElementById('sendBtn');
+        /* --- Шахматы --- */
+        if (!window.Telegram) window.Telegram = { WebApp: { sendData: d => alert("Отправка боту: " + d) } };
 
-            // Переходы
-            playBtn.addEventListener('click', showGame);
-            rulesBtn.addEventListener('click', () => { start.style.display = 'none'; gameDiv.style.display = 'none'; rules.style.display = 'block'; });
-            backBtn.addEventListener('click', showStart);
+        const statusDiv = document.getElementById('status');
+        const sendBtn = document.getElementById('sendBtn');
 
-            function showStart() { start.style.display = 'block'; rules.style.display = 'none'; gameDiv.style.display = 'none'; statusDiv.textContent = ''; }
-            function showGame() {
-                start.style.display = 'none'; rules.style.
+        const game = new Chess();
+        let selected = null;
+        const pieceImages = {
+            'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
+            'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
+            'n': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
+            'b': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
+            'q': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
+            'k': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg',
+            'P': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
+            'R': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
+            'N': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
+            'B': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
+            'Q': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+            'K': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg'
+        };
 
-                    display = 'none'; gameDiv.style.display = 'block'; drawBoard(); statusDiv.textContent = '';
-            }
-
-            const game = new Chess();
-            let selected = null;
-            const pieceImages = {
-                'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
-                'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
-                'n': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
-                'b': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
-                'q': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
-                'k': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg',
-                'P': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
-                'R': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
-                'N': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
-                'B': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
-                'Q': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
-                'K': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg'
-            };
-
-            function drawBoard() {
-                const table = document.getElementById('board');
-                table.innerHTML = '';
-                const board = game.board();
-                for (let i = 0; i < 8; i++) {
-                    const row = document.createElement('tr');
-                    for (let j = 0; j < 8; j++) {
-                        const cell = document.createElement('td');
-                        const div = document.createElement('div');
-                        const piece = board[i][j];
-                        if (piece) {
-                            const img = document.createElement('img');
-                            const code = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
-                            img.src = pieceImages[code];
-                            img.className = 'piece';
-                            div.appendChild(img);
-                        }
-                        div.className = (i + j) % 2 === 0 ? 'white' : 'black';
-                        if (selected && selected[0] === i && selected[1] === j) div.classList.add('selected');
-                        div.onclick = () => handleClick(i, j);
-                        cell.appendChild(div);
-                        row.appendChild(cell);
+        function drawBoard() {
+            const table = document.getElementById('board');
+            table.innerHTML = '';
+            const board = game.board();
+            for (let i = 0; i < 8; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 8; j++) {
+                    const cell = document.createElement('td');
+                    const div = document.createElement('div');
+                    const piece = board[i][j];
+                    if (piece) {
+                        const img = document.createElement('img');
+                        const code = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
+                        img.src = pieceImages[code];
+                        img.className = 'piece';
+                        div.appendChild(img);
                     }
-                    table.appendChild(row);
+                    div.className = (i + j) % 2 === 0 ? 'white' : 'black';
+                    if (selected && selected[0] === i && selected[1] === j) div.classList.add('selected');
+                    div.onclick = () => handleClick(i, j);
+                    cell.appendChild(div);
+                    row.appendChild(cell);
                 }
-                checkStatus();
-                resizeBoard();
+                table.appendChild(row);
             }
+            checkStatus();
+            resizeBoard();
+        }
 
-            function handleClick(i, j) {
-                const square = String.fromCharCode(97 + j) + (8 - i);
-                if (selected) {
-                    const from = String.fromCharCode(97 + selected[1]) + (8 - selected[0]);
-                    const move = game.move({ from, to: square, promotion: 'q' });
-                    selected = null;
-                    drawBoard();
-                    if (move) setTimeout(botMove, 300);
-                } else {
-                    const piece = game.get(square);
-                    if (piece && piece.color === 'w') selected = [i, j];
-                    drawBoard();
-                }
-            }
-
-            function botMove() {
-                const moves = game.moves();
-                if (moves.length === 0) return;
-                const move = moves[Math.floor(Math.random() * moves.length)];
-                game.move(move);
+        function handleClick(i, j) {
+            const square = String.fromCharCode(97 + j) + (8 - i);
+            if (selected) {
+                const from = String.fromCharCode(97 + selected[1]) + (8 - selected[0]);
+                const move = game.move({ from, to: square, promotion: 'q' });
+                selected = null;
+                drawBoard();
+                if (move) setTimeout(botMove, 300);
+            } else {
+                const piece = game.get(square);
+                if (piece && piece.color === 'w') selected = [i, j];
                 drawBoard();
             }
+        }
 
-            function checkStatus() {
-                if (game.in_checkmate()) { statusDiv.textContent = 'Мат! Игра окончена.'; }
-                else if (game.in_stalemate()) { statusDiv.textContent = 'Пат! Ничья.'; }
-                else if (game.in_check()) { statusDiv.textContent = 'Шах!'; }
-                else { statusDiv.textContent = ''; }
-            }
+        function botMove() {
+            const moves = game.moves();
+            if (moves.length === 0) return;
+            const move = moves[Math.floor(Math.random() * moves.length)];
+            game.move(move);
+            drawBoard();
+        }
 
-            function sendData() {
-                Telegram.WebApp.sendData(JSON.stringify({ fen: game.fen(), history: game.history() }));
-            }
-            sendBtn.addEventListener('click', sendData);
+        function checkStatus() {
+            if (game.in_checkmate()) { statusDiv.textContent = 'Мат! Игра окончена.'; }
+            else if (game.in_stalemate()) { statusDiv.textContent = 'Пат! Ничья.'; }
+            else if (game.in_check()) { statusDiv.textContent = 'Шах!'; }
+            else { statusDiv.textContent = ''; }
+        }
 
-            function resizeBoard() {
-                const table = document.getElementById('board');
-                const size = Math.min(window.innerWidth * 0.95, 600);
-                table.style.width = size + 'px';
-                table.style.height = size + 'px';
-            }
-            window.addEventListener('resize', resizeBoard);
+        function sendData() {
+            Telegram.WebApp.sendData(JSON.stringify({ fen: game.fen(), history: game.history() }));
+        }
+        sendBtn.addEventListener('click', sendData);
 
-            showStart();
-
-        });
+        function resizeBoard() {
+            const table = document.getElementById('board');
+            const size = Math.min(window.innerWidth * 0.95, 600);
+            table.style.width = size + 'px';
+            table.style.height = size + 'px';
+        }
+        window.addEventListener('resize', resizeBoard);
     </script>
 </body>
 
