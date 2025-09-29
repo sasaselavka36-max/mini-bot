@@ -10,38 +10,70 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #d7b899 url('https://i.ibb.co/jbgJ6p6/wood-texture.jpg') repeat;
+            background-size: cover;
+            color: #fff;
+        }
+
+        /* Верхняя панель */
+        header {
+            background: #5c3d28;
+            color: #f9e4b7;
             text-align: center;
-            background: #f7f3e9;
+            padding: 12px;
+            font-size: 22px;
+            font-weight: bold;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
         }
 
-        #start,
-        #rules,
-        #game {
-            display: none;
-            padding: 20px;
+        /* Основной контейнер */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 10px;
+            overflow-y: auto;
         }
 
-        button {
-            font-size: 18px;
-            padding: 12px 30px;
-            margin: 10px;
-            cursor: pointer;
+        /* Нижнее меню */
+        footer {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #5c3d28;
+            padding: 10px 0;
+            box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        footer button {
+            background: none;
             border: none;
-            border-radius: 10px;
-            background: #6c5ce7;
-            color: white;
-            box-shadow: 0 4px #4834d4;
-            transition: 0.2s;
+            color: #f9e4b7;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
         }
 
-        button:hover {
-            background: #4834d4;
-            box-shadow: 0 2px #312e81;
+        footer button:hover {
+            color: #fff;
         }
 
-        button:active {
-            box-shadow: 0 1px #312e81;
-            transform: translateY(2px);
+        /* Игра */
+        #board {
+            border: 6px solid #5c3d28;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            margin-top: 10px;
+            border-radius: 8px;
+            background: #000;
         }
 
         td {
@@ -78,122 +110,77 @@
         }
 
         #status {
-            font-size: 20px;
-            color: red;
-            margin-top: 10px;
+            font-size: 18px;
             font-weight: bold;
+            color: #ffb347;
+            margin-top: 10px;
         }
 
-        h1,
-        h2 {
-            color: #2d3436;
-        }
-
-        /* Новый стиль для кнопок меню и разработчика */
-        #start button,
-        #developer button {
+        /* Кнопки */
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
             background: #8b5e3c;
-            /* коричневый цвет */
-            box-shadow: 0 4px #5c3d28;
+            color: white;
+            box-shadow: 0 3px #5c3d28;
+            transition: 0.2s;
         }
 
-        #start button:hover,
-        #developer button:hover {
+        button:hover {
             background: #5c3d28;
-            box-shadow: 0 2px #3a2617;
         }
 
-        #start button:active,
-        #developer button:active {
-            box-shadow: 0 1px #3a2617;
+        button:active {
             transform: translateY(2px);
         }
 
-        /* Стиль правил */
-        #rules h2,
-        #rules h3 {
-            text-align: center;
-        }
+        /* Адаптив */
+        @media(max-width:600px) {
+            header {
+                font-size: 18px;
+            }
 
-        #rules p,
-        #rules ul {
-            text-align: left;
-            max-width: 700px;
-            margin: 0 auto 15px auto;
-            line-height: 1.5;
-        }
-
-        #developer {
-            text-align: center;
-            margin-top: 30px;
+            footer button {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Стартовое меню -->
-    <div id="start">
-        <h1>Мини-Шахматы</h1>
-        <button id="playBtn">Играть</button>
-        <button id="rulesBtn">Правила</button>
-    </div>
+    <header>Мини шахматы</header>
 
-    <!-- Правила -->
-    <div id="rules">
-        <h2>Правила шахмат</h2>
+    <main>
+        <!-- Стартовое меню -->
+        <div id="start">
+            <button id="playBtn">Играть</button>
+            <button id="rulesBtn">Правила</button>
+        </div>
 
-        <h3>Доска и фигуры</h3>
-        <p>Игра ведётся на доске 8×8 клеток (64 клетки). Клетки чередуются по цвету. У каждого игрока есть 16 фигур:</p>
-        <ul>
-            <li>1 король</li>
-            <li>1 ферзь</li>
-            <li>2 ладьи</li>
-            <li>2 слона</li>
-            <li>2 коня</li>
-            <li>8 пешек</li>
-        </ul>
+        <!-- Правила -->
+        <div id="rules" style="display:none;">
+            <h2>Правила шахмат</h2>
+            <p>Краткое описание правил игры...</p>
+            <button id="backBtn">Назад</button>
+        </div>
 
-        <h3>Расстановка</h3>
-        <ul>
-            <li>Король — e1 для белых, e8 для чёрных</li>
-            <li>Ферзь — d1 для белых, d8 для чёрных</li>
-            <li>Ладьи — a1 и h1 для белых, a8 и h8 для чёрных</li>
-            <li>Кони — b1 и g1 для белых, b8 и g8 для чёрных</li>
-            <li>Слоны — c1 и f1 для белых, c8 и f8 для чёрных</li>
-        </ul>
+        <!-- Игра -->
+        <div id="game" style="display:none;">
+            <table id="board"></table>
+            <div id="status"></div>
+            <button id="sendBtn">Отправить состояние боту</button>
+        </div>
+    </main>
 
-        <h3>Ходы</h3>
-        <p>Игроки ходят по очереди. Первый ход делает белый. Ход — это передвижение фигуры на свободную клетку или
-            взятие фигуры соперника. Взятая фигура снимается с доски. Ходы нельзя отменять, кроме случаев нарушения
-            правил.</p>
-
-        <h3>Цель игры</h3>
-        <p>Поставить мат королю противника — создать ситуацию, когда король не может защититься и будет взят следующим
-            ходом.</p>
-
-        <h3>Окончание</h3>
-        <ul>
-            <li>Побеждает игрок, поставивший мат.</li>
-            <li>Партия может закончиться вничью: троекратное повторение позиции, недостаток материала для мата,
-                соглашение игроков.</li>
-        </ul>
-
-        <button id="backBtn">Назад</button>
-    </div>
-
-    <!-- Игра -->
-    <div id="game">
-        <h2>Игра</h2>
-        <table id="board"></table>
-        <div id="status"></div>
-        <button id="sendBtn">Отправить состояние боту</button>
-    </div>
-
-    <!-- Кнопка разработчика -->
-    <div id="developer">
-        <button onclick="window.open('https://t.me/traficcent', '_blank')">Разработчик: tg @traficcent</button>
-    </div>
+    <footer>
+        <button><span>👤</span>Профиль</button>
+        <button><span>🏠</span>Главная</button>
+        <button><span>⚙️</span>Настройки</button>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script>
@@ -206,40 +193,25 @@
             const gameDiv = document.getElementById('game');
             const statusDiv = document.getElementById('status');
 
-
             const playBtn = document.getElementById('playBtn');
             const rulesBtn = document.getElementById('rulesBtn');
             const backBtn = document.getElementById('backBtn');
             const sendBtn = document.getElementById('sendBtn');
 
+            // Переходы
             playBtn.addEventListener('click', showGame);
-            rulesBtn.addEventListener('click', showRules);
+            rulesBtn.addEventListener('click', () => { start.style.display = 'none'; gameDiv.style.display = 'none'; rules.style.display = 'block'; });
             backBtn.addEventListener('click', showStart);
-            sendBtn.addEventListener('click', sendData);
 
-            function showStart() {
-                start.style.display = 'block';
-                rules.style.display = 'none';
-                gameDiv.style.display = 'none';
-                statusDiv.textContent = '';
-            }
-            function showRules() {
-                start.style.display = 'none';
-                rules.style.display = 'block';
-                gameDiv.style.display = 'none';
-                statusDiv.textContent = '';
-            }
+            function showStart() { start.style.display = 'block'; rules.style.display = 'none'; gameDiv.style.display = 'none'; statusDiv.textContent = ''; }
             function showGame() {
-                start.style.display = 'none';
-                rules.style.display = 'none';
-                gameDiv.style.display = 'block';
-                drawBoard();
-                statusDiv.textContent = '';
+                start.style.display = 'none'; rules.style.
+
+                    display = 'none'; gameDiv.style.display = 'block'; drawBoard(); statusDiv.textContent = '';
             }
 
             const game = new Chess();
             let selected = null;
-
             const pieceImages = {
                 'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
                 'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
@@ -259,7 +231,6 @@
                 const table = document.getElementById('board');
                 table.innerHTML = '';
                 const board = game.board();
-
                 for (let i = 0; i < 8; i++) {
                     const row = document.createElement('tr');
                     for (let j = 0; j < 8; j++) {
@@ -318,8 +289,8 @@
             function sendData() {
                 Telegram.WebApp.sendData(JSON.stringify({ fen: game.fen(), history: game.history() }));
             }
+            sendBtn.addEventListener('click', sendData);
 
-            // 🔹 квадратная доска под Telegram WebView
             function resizeBoard() {
                 const table = document.getElementById('board');
                 const size = Math.min(window.innerWidth * 0.95, 600);
@@ -330,7 +301,7 @@
 
             showStart();
 
-        }); // конец DOMContentLoaded
+        });
     </script>
 </body>
 
