@@ -2,8 +2,8 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Мини-Шахматы</title>
     <style>
         body {
@@ -17,7 +17,6 @@
             color: #fff;
         }
 
-        /* Верхняя панель */
         header {
             background: #5c3d28;
             color: #f9e4b7;
@@ -28,7 +27,6 @@
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
         }
 
-        /* Основной контейнер */
         main {
             flex: 1;
             display: flex;
@@ -39,7 +37,6 @@
             overflow-y: auto;
         }
 
-        /* Нижнее меню */
         footer {
             display: flex;
             justify-content: space-around;
@@ -66,7 +63,6 @@
             color: #fff;
         }
 
-        /* Кнопки */
         .menu-buttons {
             display: flex;
             flex-direction: column;
@@ -94,7 +90,6 @@
             transform: translateY(2px);
         }
 
-        /* Доска */
         #board {
             border: 6px solid #5c3d28;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
@@ -142,19 +137,65 @@
             color: #ffb347;
             margin-top: 10px;
         }
+
+        /* панель выбора (в стиле игры) */
+        .mode-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .mode-panel .btn {
+            width: 220px;
+            text-align: center;
+        }
+
+        .difficulty-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .small-note {
+            font-size: 13px;
+            color: #ffdead;
+            margin-top: 6px;
+        }
     </style>
 </head>
 
 <body>
-
     <header>Мини шахматы</header>
 
     <main>
         <!-- Главная -->
         <div id="homePage" class="page">
             <div class="menu-buttons">
-                <button onclick="showPage('gamePage')">Играть</button>
+                <button onclick="showPage('modePage')">Играть</button>
                 <button onclick="showPage('rulesPage')">Правила</button>
+            </div>
+        </div>
+
+        <!-- Выбор режима -->
+        <div id="modePage" class="page" style="display:none;">
+            <div class="menu-buttons" style="max-width:300px; margin:auto;">
+                <button onclick="alert('Режим с другом пока недоступен')">🫱🏽‍🫲🏻 Играть с другом</button>
+                <button onclick="showPage('botLevelPage')">🤖 Играть с ботом</button>
+                <div style="margin-top:15px; font-size:16px; font-weight:bold; color:#ffb347;">Выберите режим, чтобы
+                    начать</div>
+            </div>
+        </div>
+
+        <!-- Выбор уровня бота -->
+        <div id="botLevelPage" class="page" style="display:none;">
+            <div class="menu-buttons" style="max-width:300px; margin:auto;">
+                <button onclick="startGame('easy')">Лёгкий</button>
+                <button onclick="startGame('medium')">Средний</button>
+                <button onclick="startGame('hard')">Сложный</button>
+                <div style="margin-top:10px; font-size:14px; color:#ffb347;">Выберите сложность бота</div>
             </div>
         </div>
 
@@ -201,23 +242,28 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script>
+        // Простая навигация
         function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.style.
-
-
-                display = 'none');
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
             document.getElementById(id).style.display = 'block';
-            if (id === 'gamePage') { drawBoard(); }
+            if (id === 'gamePage') drawBoard();
         }
 
-        /* --- Шахматы --- */
         if (!window.Telegram) window.Telegram = { WebApp: { sendData: d => alert("Отправка боту: " + d) } };
 
         const statusDiv = document.getElementById('status');
         const sendBtn = document.getElementById('sendBtn');
 
-        const game = new Chess();
+        // игра и состояние
+        let game = new Chess();
         let selected = null;
+
+        // режимы
+        let currentMode = null; // 'bot' or null
+        let botLevel = 'easy'; // 'easy'|'medium'|'hard'
+        let botColor = 'b'; // bot plays black by default
+
+        // картинки фигур
         const pieceImages = {
             'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
             'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
@@ -233,6 +279,16 @@
             'K': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg'
         };
 
+        function startGame(level) {
+            botLevel = level;
+            currentMode = 'bot';
+            game = new Chess();
+            selected = null;
+            showPage('gamePage');
+            statusDiv.textContent = 'Вы играете с ботом — уровень: ' + (level === 'easy' ? 'Лёгкий' : level === 'medium' ? 'Средний' : 'Сложный');
+            drawBoard();
+        }
+
         function drawBoard() {
             const table = document.getElementById('board');
             table.innerHTML = '';
@@ -240,6 +296,7 @@
             for (let i = 0; i < 8; i++) {
                 const row = document.createElement('tr');
                 for (let j = 0; j < 8; j++) {
+
                     const cell = document.createElement('td');
                     const div = document.createElement('div');
                     const piece = board[i][j];
@@ -269,27 +326,35 @@
                 const move = game.move({ from, to: square, promotion: 'q' });
                 selected = null;
                 drawBoard();
-                if (move) setTimeout(botMove, 300);
+                if (move) {
+                    // после хода игрока — если режим бот, выполняем ход бота
+                    setTimeout(() => {
+                        if (currentMode === 'bot' && game.turn() === botColor && !game.game_over()) {
+                            botMakeMove();
+                        }
+                    }, 200);
+                }
             } else {
                 const piece = game.get(square);
+                // игрок управляет белыми
                 if (piece && piece.color === 'w') selected = [i, j];
                 drawBoard();
             }
         }
 
-        function botMove() {
-            const moves = game.moves();
-            if (moves.length === 0) return;
-            const move = moves[Math.floor(Math.random() * moves.length)];
-            game.move(move);
-            drawBoard();
-        }
-
         function checkStatus() {
-            if (game.in_checkmate()) { statusDiv.textContent = 'Мат! Игра окончена.'; }
-            else if (game.in_stalemate()) { statusDiv.textContent = 'Пат! Ничья.'; }
-            else if (game.in_check()) { statusDiv.textContent = 'Шах!'; }
-            else { statusDiv.textContent = ''; }
+            if (game.in_checkmate()) {
+                statusDiv.textContent = 'Мат! Игра окончена.';
+            } else if (game.in_stalemate()) {
+                statusDiv.textContent = 'Пат! Ничья.';
+            } else if (game.in_check()) {
+                statusDiv.textContent = 'Шах!';
+            } else {
+                // если режим бот и сейчас ход бота — сказать что бот думает
+                if (currentMode === 'bot' && game.turn() === botColor && !game.game_over()) {
+                    statusDiv.textContent = 'Ход бота...';
+                } else statusDiv.textContent = '';
+            }
         }
 
         function sendData() {
@@ -304,6 +369,254 @@
             table.style.height = size + 'px';
         }
         window.addEventListener('resize', resizeBoard);
+
+        /* ====================== BOT: easy / medium / hard ====================== */
+
+        // Переменные для поиска
+        const pieceValues = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+
+        // Простые таблицы позиции (PST) для улучшенной оценки (white perspective)
+        const PST = {
+            p: [
+                0, 0, 0, 0, 0, 0, 0, 0,
+                5, 10, 10, -20, -20, 10, 10, 5,
+                5, -5, -10, 0, 0, -10, -5, 5,
+                0, 0, 0, 20, 20, 0, 0, 0,
+                5, 5, 10, 25, 25, 10, 5, 5,
+                10, 10, 20, 30, 30, 20, 10, 10,
+                50, 50, 50, 50, 50, 50, 50, 50,
+                0, 0, 0, 0, 0, 0, 0, 0
+            ],
+            n: [
+                -50, -40, -30, -30, -30, -30, -40, -50,
+                -40, -20, 0, 5, 5, 0, -20, -40,
+                -30, 5, 10, 15, 15, 10, 5, -30,
+                -30, 0, 15, 20, 20, 15, 0, -30,
+                -30, 5, 15, 20, 20, 15, 5, -30,
+                -30, 0, 10, 15, 15, 10, 0, -30,
+                -40, -20, 0, 0, 0, 0, -20, -40,
+                -50, -40, -30, -30, -30, -30, -40, -50
+            ],
+            b: [
+                -20, -10, -10, -10, -10, -10, -10, -20,
+                -10, 5, 0, 0, 0, 0, 5, -10,
+                -10, 10, 10, 10, 10, 10, 10, -10,
+                -10, 0, 10, 10, 10, 10, 0, -10,
+                -10, 5, 5, 10, 10, 5, 5, -10,
+                -10, 0, 5, 10, 10, 5, 0, -10,
+                -10, 0, 0, 0, 0, 0, 0, -10,
+                -20, -10, -10, -10, -10, -10, -10, -20
+            ],
+            r: [
+                0, 0, 5, 10, 10, 5, 0, 0,
+                0, 0, 5, 10, 10, 5, 0, 0,
+                0, 0, 5, 10, 10, 5, 0, 0,
+                0, 0, 5, 10, 10, 5, 0, 0,
+                0, 0, 5, 10, 10, 5, 0, 0,
+                0, 0, 5, 10, 10, 5, 0, 0,
+                25, 25, 25, 25, 25, 25, 25, 25,
+                0, 0, 5, 10, 10, 5, 0, 0
+            ],
+            q: [
+                -20, -10, -10, -5, -5, -10, -10, -20,
+                -10, 0, 0, 0, 0, 0, 0, -10,
+                -10, 0, 5, 5, 5, 5, 0, -10,
+                -5, 0, 5, 5, 5, 5, 0, -5,
+                0, 0, 5, 5, 5, 5, 0, -5,
+                -10, 5, 5, 5, 5, 5, 0, -10,
+                -10, 0, 5, 0, 0, 0, 0, -10,
+                -20, -10, -10, -5, -5, -10, -10, -20
+            ],
+            k: [
+                -30, -40, -40, -50, -50, -40, -40, -30,
+                -30, -40, -40, -50, -50, -40, -40, -30,
+                -30, -40, -40, -50, -50, -40, -40, -30,
+                -30, -40, -40, -50, -50, -40, -40, -30,
+                -20, -30, -30, -40, -40, -30, -30, -20,
+                -10, -20, -20, -20, -20, -20, -20, -10,
+                20, 20, 0, 0, 0, 0, 20, 20,
+                20, 30, 10, 0, 0, 10, 30, 20
+            ]
+        };
+
+        // Transposition table
+        const TT = {};
+
+        function evaluate(gameInstance, color) {
+            // color: 'w' or 'b' - evaluate from perspective of color
+            const board = gameInstance.board();
+            let score = 0;
+            for (let rank = 0; rank < 8; rank++) {
+                for (let file = 0; file < 8; file++) {
+                    const p = board[rank][file];
+                    if (!p) continue;
+                    const type = p.type;
+                    const base = pieceValues[type] || 0;
+                    // convert rank,file to 0..63 index white perspective
+                    const sqIndex = (7 - rank) * 8 + file;
+                    let pstVal = (PST[type] && PST[type][sqIndex]) || 0;
+                    // if piece is black, invert pst
+                    if (p.color === 'b') pstVal = -pstVal;
+                    const val = (p.color === color ? 1 : -1) * (base + pstVal);
+                    score += val;
+                }
+            }
+            return score;
+        }
+
+        function pieceValue(letter) {
+            if (!letter) return 0;
+            return pieceValues[letter.toLowerCase()] || 0;
+        }
+
+        function minimax(gameInstance, depth, alpha, beta, maximizingPlayer, botColor, nodeCounter) {
+            // nodeCounter: {count: number}
+            if (!nodeCounter.count) nodeCounter.count = 0;
+            nodeCounter.count++;
+            const NODE_LIMIT = 220000; // safety limit
+            if (nodeCounter.count > NODE_LIMIT) {
+                return { score: evaluate(gameInstance, botColor) };
+            }
+
+            const fenKey = gameInstance.fen() + "|d" + depth + "|m" + maximizingPlayer;
+            if (TT[fenKey]) return TT[fenKey];
+
+            if (depth === 0 || gameInstance.game_over()) {
+                let sc;
+                if (gameInstance.in_checkmate()) {
+                    sc = gameInstance.turn() === botColor ? -999999 : 999999;
+                } else {
+                    sc = evaluate(gameInstance, botColor);
+                }
+                const out = { score: sc };
+                TT[fenKey] = out;
+                return out;
+            }
+
+            const moves = gameInstance.moves({ verbose: true });
+
+            // move ordering: captures/promotions first
+            moves.sort((a, b) => {
+                const va = (a.captured ? pieceValue(a.captured) + 1000 : 0) + (a.promotion ? 500 : 0);
+                const vb = (b.captured ? pieceValue(b.captured) + 1000 : 0) + (b.promotion ? 500 : 0);
+                return vb - va;
+            });
+
+            let bestMove = null;
+
+            if (maximizingPlayer) {
+                let maxEval = -Infinity;
+                for (let i = 0; i < moves.length; i++) {
+                    const m = moves[i];
+                    gameInstance.move({ from: m.from, to: m.to, promotion: m.promotion || 'q' });
+                    const res = minimax(gameInstance, depth - 1, alpha, beta, false, botColor, nodeCounter);
+                    gameInstance.undo();
+                    if (res.score > maxEval) {
+                        maxEval = res.score;
+                        bestMove = m;
+                    }
+                    alpha = Math.max(alpha, maxEval);
+                    if (beta <= alpha) break;
+                }
+                const out = { score: maxEval, move: bestMove };
+                TT[fenKey] = out;
+                return out;
+            } else {
+                let minEval = Infinity;
+                for (let i = 0; i < moves.length; i++) {
+                    const m = moves[i];
+                    gameInstance.move({ from: m.from, to: m.to, promotion: m.promotion || 'q' });
+                    const res = minimax(gameInstance, depth - 1, alpha, beta, true, botColor, nodeCounter);
+                    gameInstance.undo();
+                    if (res.score < minEval) {
+
+                        minEval = res.score;
+                        bestMove = m;
+                    }
+                    beta = Math.min(beta, minEval);
+                    if (beta <= alpha) break;
+                }
+                const out = { score: minEval, move: bestMove };
+                TT[fenKey] = out;
+                return out;
+            }
+        }
+
+        function getBestMove(depth) {
+            // bot is maximizing if it's its turn
+            const botToMove = (game.turn() === botColor);
+            // clear TT sometimes? keep it for speed
+            const nodeCounter = { count: 0 };
+            const res = minimax(game, depth, -Infinity, Infinity, botToMove, botColor, nodeCounter);
+            // if res.move undefined -> fallback random legal verbose move
+            if (!res.move) {
+                const moves = game.moves({ verbose: true });
+                if (!moves || moves.length === 0) return null;
+                return moves[Math.floor(Math.random() * moves.length)];
+            }
+            return res.move;
+        }
+
+        function botMakeMove() {
+            if (game.game_over()) {
+                drawBoard();
+                return;
+            }
+            const moves = game.moves();
+            if (moves.length === 0) return;
+
+            if (botLevel === 'easy') {
+                const m = moves[Math.floor(Math.random() * moves.length)];
+                game.move(m);
+                drawBoard();
+                return;
+            }
+
+            if (botLevel === 'medium') {
+                // depth 2 minimax (good compromise)
+                try {
+                    const best = getBestMove(2);
+                    if (best) game.move({ from: best.from, to: best.to, promotion: best.promotion || 'q' });
+                    else {
+                        const m = moves[Math.floor(Math.random() * moves.length)];
+                        game.move(m);
+                    }
+                } catch (e) {
+                    // fallback
+                    const m = moves[Math.floor(Math.random() * moves.length)];
+                    game.move(m);
+                }
+                drawBoard();
+                return;
+            }
+
+            if (botLevel === 'hard') {
+                // depth 4 minimax with alpha-beta; strong but constrained by NODE_LIMIT
+                try {
+                    const best = getBestMove(4);
+                    if (best) game.move({ from: best.from, to: best.to, promotion: best.promotion || 'q' });
+                    else {
+                        const m = moves[Math.floor(Math.random() * moves.length)];
+                        game.move(m);
+                    }
+                } catch (e) {
+                    // safety fallback
+                    const m = moves[Math.floor(Math.random() * moves.length)];
+                    game.move(m);
+                }
+                drawBoard();
+                return;
+            }
+        }
+
+        // If user starts a game and bot starts (we default player white), so bot won't move immediately.
+        // But if you later want bot to play as white, set botColor='w' and call botMakeMove after startGame.
+
+        // Expose startGame to onclick already used in HTML
+        window.startGame = startGame;
+
+        // initial page
+        showPage('homePage');
     </script>
 </body>
 
