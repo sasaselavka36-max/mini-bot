@@ -200,9 +200,17 @@
         </div>
 
         <!-- Профиль -->
-        <div id="profilePage" class="page" style="display:none;">
+        <div id="profilePage" class="page" style="display:none; text-align:center;">
             <h2>Профиль</h2>
-            <p>Здесь будет информация об игроке.</p>
+            <img id="profileAvatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                style="width:120px; height:120px; border-radius:50%; border:3px solid #fff; margin-bottom:12px;">
+            <div id="profileInfo" style="font-size:16px; line-height:1.6; color:#ffb347;">
+                <p>Имя: —</p>
+                <p>Ник: @—</p>
+                <p>⭐️ Рейтинг: 1000</p>
+                <p>🎮 Игр сыграно: 0</p>
+                <p>✅ Побед: 0 | ❌ Поражений: 0 | 🤝 Ничьих: 0</p>
+            </div>
         </div>
 
         <!-- Настройки -->
@@ -617,6 +625,32 @@
 
         // initial page
         showPage('homePage');
+        function loadProfile() {
+            const defaultAvatar = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+            let profile = null;
+
+            // пример: получение данных профиля через query string ?profile=JSON
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('profile')) {
+                try {
+                    profile = JSON.parse(decodeURIComponent(params.get('profile')));
+                } catch (e) {
+                    console.error('Ошибка разбора профиля', e);
+                }
+            }
+
+            if (profile) {
+                document.getElementById('profileAvatar').src = profile.avatar_url || defaultAvatar;
+                const infoDiv = document.getElementById('profileInfo');
+                infoDiv.innerHTML = `
+            <p>Имя: ${profile.first_name || ''} ${profile.last_name || ''}</p>
+            <p>Ник: @${profile.username || '—'}</p>
+            <p>⭐️ Рейтинг: ${profile.rating || 1000}</p>
+            <p>🎮 Игр сыграно: ${profile.games_played || 0}</p>
+            <p>✅ Побед: ${profile.wins || 0} | ❌ Поражений: ${profile.losses || 0} | 🤝 Ничьих: ${profile.draws || 0}</p>
+        `;
+            }
+        }
     </script>
 </body>
 
