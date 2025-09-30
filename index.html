@@ -164,10 +164,422 @@
             color: #ffdead;
             margin-top: 6px;
         }
+
+        /* ---------- ПРОФИЛЬ ---------- */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid #f9e4b7;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        .profile-info h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .profile-info p {
+            margin: 5px 0 0;
+            color: #f9e4b7;
+            font-size: 14px;
+        }
+
+        .profile-rating {
+            background: rgba(92, 61, 40, 0.9);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+            margin: 0 auto 20px auto;
+            font-weight: bold;
+            width: 200px;
+            color: #ffda77;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            flex: 1;
+            min-width: 70px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #f9e4b7;
+        }
+
+        .win {
+            color: #4caf50;
+        }
+
+        .lose {
+            color: #ff5252;
+        }
+
+        .draw {
+            color: #ffda77;
+        }
+
+        /* ---------- НАСТРОЙКИ ---------- */
+        .settings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            /* БЫЛО 15px → теперь расстояние больше */
+            max-width: 320px;
+            margin: 0 auto 25px auto;
+            /* чуть больше отступ снизу */
+        }
+
+        .setting-card {
+            background: rgba(92, 61, 40, 0.9);
+            border-radius: 12px;
+            padding: 16px 20px;
+            /* БЫЛО 12px 18px → стало просторнее */
+            color: #f9e4b7;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+            transition: 0.3s;
+        }
+
+        .setting-card:hover {
+            transform: scale(1.02);
+            background: rgba(92, 61, 40, 1);
+        }
+
+        /* Тумблер */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: #8b5e3c;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+
+        /* Кнопка сохранения */
+        .save-btn {
+            margin-top: 10px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            background: #8b5e3c;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px #5c3d28;
+            transition: 0.2s;
+        }
+
+        .save-btn:hover {
+            background: #5c3d28;
+            box-shadow: 0 2px #3a2617;
+        }
+
+        .save-btn:active {
+            transform: translateY(2px);
+        }
+
+        /* Тёмная тема */
+        body.dark-theme {
+            background: #121212 !important;
+            color: #eee !important;
+        }
+
+        body.dark-theme header,
+        body.dark-theme footer {
+            background: #222 !important;
+            color: #ddd !important;
+        }
+
+        body.dark-theme .menu-buttons button {
+            background: #333;
+            box-shadow: 0 4px #111;
+        }
+
+        body.dark-theme .menu-buttons button:hover {
+            background: #555;
+            box-shadow: 0 2px #222;
+        }
+
+        body.dark-theme #board {
+            border-color: #333;
+            background: #000;
+        }
+
+        body.dark-theme .white {
+            background: #888;
+        }
+
+        body.dark-theme .black {
+            background: #444;
+        }
+
+        body.dark-theme .setting-card {
+            background: rgba(40, 40, 40, 0.9);
+            color: #ddd;
+        }
+
+        body.dark-theme .profile-rating {
+            background: rgba(40, 40, 40, 0.9);
+        }
+
+        body.dark-theme .save-btn {
+            background: #333;
+            color: #eee;
+            box-shadow: 0 4px #111;
+        }
+
+        body.dark-theme .save-btn:hover {
+            background: #555;
+            box-shadow: 0 2px #222;
+        }
+
+        /* Общий контейнер для выбора */
+        .select-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            padding: 25px 20px;
+            max-width: 350px;
+            margin: auto;
+            background: rgba(92, 61, 40, 0.9);
+            border-radius: 14px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Заголовок */
+        .select-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffda77;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* Кнопки выбора */
+        .select-panel button {
+            width: 100%;
+            padding: 14px;
+            font-size: 17px;
+            border: none;
+            border-radius: 10px;
+            background: #8b5e3c;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px #5c3d28;
+            transition: all 0.25s;
+        }
+
+        .select-panel button:hover {
+            background: #5c3d28;
+            box-shadow: 0 2px #3a2617;
+            transform: translateY(-2px);
+        }
+
+        .select-panel button:active {
+            transform: translateY(1px);
+        }
+
+        /* Для тёмной темы */
+        body.dark-theme .select-panel {
+            background: rgba(40, 40, 40, 0.95);
+        }
+
+        body.dark-theme .select-title {
+            color: #ffb347;
+        }
+
+        body.dark-theme .select-panel button {
+            background: #333;
+            box-shadow: 0 4px #111;
+        }
+
+        body.dark-theme .select-panel button:hover {
+            background: #555;
+            box-shadow: 0 2px #222;
+        }
+
+        body.dark-theme .select-title {
+            color: #fff;
+        }
+
+        /* Контейнер для уведомлений */
+        #notifications {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 2000;
+        }
+
+        /* Оформление уведомлений */
+        .notification {
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+        }
+
+        /* Цвета для разных типов */
+        .notification.info {
+            background: #3a86ff;
+            /* синий */
+        }
+
+        .notification.warning {
+            background: #ffb703;
+            /* жёлтый */
+            color: #222;
+        }
+
+        .notification.danger {
+            background: #d62828;
+            /* красный */
+        }
+
+        .notification.success {
+            background: #2a9d8f;
+            /* зелёный */
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Статус игры */
+        #status {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 12px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            display: inline-block;
+            min-width: 220px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Типы статуса */
+        #status.info {
+            background: linear-gradient(135deg, #3a86ff, #8338ec);
+            color: #fff;
+        }
+
+        #status.bot {
+            background: linear-gradient(135deg, #ffb347, #ffcc33);
+            color: #222;
+        }
+
+        #status.warning {
+            background: #ffb703;
+            color: #222;
+        }
+
+        #status.danger {
+            background: #d62828;
+            color: #fff;
+        }
     </style>
 </head>
 
 <body>
+
+    <div id="notifications"></div>
+
     <header>Мини шахматы</header>
 
     <main>
@@ -181,42 +593,101 @@
 
         <!-- Выбор режима -->
         <div id="modePage" class="page" style="display:none;">
-            <div class="menu-buttons" style="max-width:300px; margin:auto;">
+            <div class="select-panel">
+                <div class="select-title">Выберите режим игры</div>
                 <button onclick="alert('Режим с другом пока недоступен')">🫱🏽‍🫲🏻 Играть с другом</button>
                 <button onclick="showPage('botLevelPage')">🤖 Играть с ботом</button>
-                <div style="margin-top:15px; font-size:16px; font-weight:bold; color:#ffb347;">Выберите режим, чтобы
-                    начать</div>
             </div>
         </div>
 
+
         <!-- Выбор уровня бота -->
         <div id="botLevelPage" class="page" style="display:none;">
-            <div class="menu-buttons" style="max-width:300px; margin:auto;">
+            <div class="select-panel">
+                <div class="select-title">Выберите сложность бота</div>
                 <button onclick="startGame('easy')">Лёгкий</button>
                 <button onclick="startGame('medium')">Средний</button>
                 <button onclick="startGame('hard')">Сложный</button>
-                <div style="margin-top:10px; font-size:14px; color:#ffb347;">Выберите сложность бота</div>
             </div>
         </div>
 
         <!-- Профиль -->
         <div id="profilePage" class="page" style="display:none; text-align:center;">
-            <h2>Профиль</h2>
-            <img id="profileAvatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                style="width:120px; height:120px; border-radius:50%; border:3px solid #fff; margin-bottom:12px;">
-            <div id="profileInfo" style="font-size:16px; line-height:1.6; color:#ffb347;">
-                <p>Имя: —</p>
-                <p>Ник: @—</p>
-                <p>⭐️ Рейтинг: 1000</p>
-                <p>🎮 Игр сыграно: 0</p>
-                <p>✅ Побед: 0 | ❌ Поражений: 0 | 🤝 Ничьих: 0</p>
+            <h2 style="margin-bottom: 15px; font-size: 22px; color: #f9e4b7; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">
+                Профиль</h2>
+
+            <!-- Аватар -->
+            <div class="profile-header">
+                <img id="profileAvatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                    class="profile-avatar">
+                <div class="profile-info">
+                    <h3>Danil</h3>
+                    <p>@itsdanii1l</p>
+                </div>
+            </div>
+
+            <!-- Рейтинг -->
+            <div class="profile-rating">
+                ⭐️ Рейтинг: <span>1000</span>
+            </div>
+
+            <!-- Статистика -->
+            <div class="profile-stats">
+                <div class="stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Игры</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value win">0</span>
+                    <span class="stat-label">Победы</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value lose">0</span>
+                    <span class="stat-label">Поражения</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value draw">0</span>
+                    <span class="stat-label">Ничьи</span>
+                </div>
             </div>
         </div>
 
         <!-- Настройки -->
-        <div id="settingsPage" class="page" style="display:none;">
-            <h2>Настройки</h2>
-            <p>Здесь будут параметры приложения.</p>
+        <div id="settingsPage" class="page" style="display:none; text-align:center;">
+            <h2 style="margin-bottom: 20px; font-size: 22px; color: #f9e4b7; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">
+                ⚙️ Настройки
+            </h2>
+
+            <div class="settings-container">
+                <!-- Звук -->
+                <div class="setting-card">
+                    <span>🔊 Звуки</span>
+                    <label class="switch">
+                        <input type="checkbox" id="soundToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Тема -->
+                <div class="setting-card">
+                    <span>🌙 Тёмная тема</span>
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- Уведомления -->
+                <div class="setting-card">
+                    <span>📩 Уведомления</span>
+                    <label class="switch">
+                        <input type="checkbox" id="notifToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="save-btn" onclick="saveSettings()">💾 Сохранить</button>
         </div>
 
         <!-- Правила -->
@@ -238,7 +709,6 @@
         <div id="gamePage" class="page" style="display:none;">
             <table id="board"></table>
             <div id="status"></div>
-            <button id="sendBtn">Отправить состояние боту</button>
         </div>
     </main>
 
@@ -256,6 +726,21 @@
             document.getElementById(id).style.display = 'block';
             if (id === 'gamePage') drawBoard();
         }
+
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notifications');
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.textContent = message;
+
+            container.appendChild(notif);
+
+            // удаляем через 3 секунды
+            setTimeout(() => {
+                notif.remove();
+            }, 3000);
+        }
+
 
         if (!window.Telegram) window.Telegram = { WebApp: { sendData: d => alert("Отправка боту: " + d) } };
 
@@ -352,18 +837,18 @@
 
         function checkStatus() {
             if (game.in_checkmate()) {
-                statusDiv.textContent = 'Мат! Игра окончена.';
+                showNotification('Мат! Игра окончена.', 'danger');
             } else if (game.in_stalemate()) {
-                statusDiv.textContent = 'Пат! Ничья.';
+                showNotification('Пат! Ничья.', 'warning');
             } else if (game.in_check()) {
-                statusDiv.textContent = 'Шах!';
+                showNotification('Шах!', 'warning');
             } else {
-                // если режим бот и сейчас ход бота — сказать что бот думает
                 if (currentMode === 'bot' && game.turn() === botColor && !game.game_over()) {
-                    statusDiv.textContent = 'Ход бота...';
-                } else statusDiv.textContent = '';
+                    showNotification('Ход бота...', 'info');
+                }
             }
         }
+
 
         function sendData() {
             Telegram.WebApp.sendData(JSON.stringify({ fen: game.fen(), history: game.history() }));
@@ -651,6 +1136,47 @@
         `;
             }
         }
+
+        // Тема
+        const themeToggle = document.getElementById('themeToggle');
+
+        // при загрузке — восстановить из localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        let botDotsInterval;
+
+        function setStatus(text, type = 'info') {
+            clearInterval(botDotsInterval);
+            statusDiv.className = ''; // сброс всех классов
+            statusDiv.classList.add(type);
+            statusDiv.textContent = text;
+
+            if (type === 'bot') {
+                // анимация точек для "Ход бота..."
+                let dots = 0;
+                botDotsInterval = setInterval(() => {
+                    dots = (dots + 1) % 4;
+                    statusDiv.textContent = '🤖 Ход бота' + '.'.repeat(dots);
+                }, 500);
+            }
+        }
+
+
+
+
     </script>
 </body>
 
