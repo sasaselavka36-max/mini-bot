@@ -1180,4 +1180,66 @@
     </script>
 </body>
 
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('themeToggle');
+
+        // Восстановление темы из localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeToggle.checked = true;
+        }
+
+        // Переключение темы
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-theme');
+                localStorage.setItem('theme', 'light');
+            }
+
+            // Перерисовываем доску, чтобы цвета клеток обновились
+            if (document.getElementById('board')) drawBoard();
+        });
+
+        // Переопределяем drawBoard, чтобы классы клеток не перезаписывались полностью
+        const originalDrawBoard = drawBoard;
+        window.drawBoard = function () {
+            const table = document.getElementById('board');
+            table.innerHTML = '';
+            const board = game.board();
+            for (let i = 0; i < 8; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 8; j++) {
+                    const cell = document.createElement('td');
+                    const div = document.createElement('div');
+                    const piece = board[i][j];
+                    if (piece) {
+                        const img = document.createElement('img');
+                        const code = piece.color === 'w' ? piece.type.toUpperCase() : piece.type;
+                        img.src = pieceImages[code];
+                        img.className = 'piece';
+                        div.appendChild(img);
+                    }
+
+                    // Ставим классы через classList, чтобы dark-theme работал
+                    div.classList.remove('white', 'black');
+                    div.classList.add((i + j) % 2 === 0 ? 'white' : 'black');
+                    if (selected && selected[0] === i && selected[1] === j) div.classList.add('selected');
+
+                    div.onclick = () => handleClick(i, j);
+                    cell.appendChild(div);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+
+            checkStatus();
+            resizeBoard();
+        };
+    });
+</script>
+
 </html>
